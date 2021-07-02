@@ -19,7 +19,7 @@ namespace InStory.binary.stream
         {
             if (_buffer != null)
             {
-                throw new Exception("Trying to reuse not disposed WStream"); //todo заменить кастомным эксепшеном
+                throw new ReUseStreamException(); 
             }
             _buffer = Manager.GetStream();
         }

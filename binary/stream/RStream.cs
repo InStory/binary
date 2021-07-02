@@ -18,6 +18,15 @@ namespace InStory.binary.stream
         // Чтобы можно было получить только из пула
         internal RStream(){}
 
+        public void Load()
+        {
+            if (Buffer != null)
+            {
+                throw new ReUseStreamException(); 
+            }
+            Buffer = Manager.GetStream();
+        }
+
         private void ReadExact(Span<byte> buf)
         {
             var n = Buffer.Read(buf);
@@ -257,11 +266,6 @@ namespace InStory.binary.stream
             ReadExact(memory.Span);
             
             return memory;
-        }
-
-        public void Load()
-        {
-            Buffer = Manager.GetStream();
         }
         
         // Про Zigzag encoding: https://en.wikipedia.org/wiki/Variable-length_quantity
