@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Title>binary</Title>
+        <Authors>NolikTop</Authors>
+        <Description>Binary serialization</Description>
+        <Company>instory</Company>
+        <AssemblyName>InStory.binary</AssemblyName>
+        <RootNamespace>InStory.binary</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.1.2" />
+    </ItemGroup>
+
+</Project>
