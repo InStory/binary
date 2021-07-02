@@ -1,132 +1,172 @@
 using System;
 using System.Buffers.Binary;
+using System.IO;
+using Microsoft.IO;
 
 namespace InStory.binary.stream
 {
-    public class RStream
+    public class RStream : IDisposable
     {
-        private ReadOnlyMemory<byte> _buffer;
-        private int _offset;
+        private static readonly RecyclableMemoryStreamManager Manager = new();
+
+        public MemoryStream Buffer
+        {
+            get;
+            private set;
+        }
         
         // Чтобы можно было получить только из пула
         internal RStream(){}
 
+        private void ReadExact(Span<byte> buf)
+        {
+            var n = Buffer.Read(buf);
+            if (n < buf.Length)
+            {
+                throw new NotEnoughBytesException();
+            }
+        }
+        
         public sbyte ReadSignedByte()
         {
-            return (sbyte)_buffer.Span[_offset++];
+            var value = Buffer.ReadByte();
+            if (value == -1)
+            {
+                throw new NotEnoughBytesException();
+            }
+            
+            return (sbyte)value;
         }
         
         public byte ReadUnsignedByte()
         {
-            return _buffer.Span[_offset++];
+            var value = Buffer.ReadByte();
+            if (value == -1)
+            {
+                throw new NotEnoughBytesException();
+            }
+            
+            return (byte)value;
         }
 
         public short ReadSignedShort()
         {
             const int size = sizeof(short);
-            
-            var r = BinaryPrimitives.ReadInt16BigEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+
+            return BinaryPrimitives.ReadInt16BigEndian(t);
         }
 
         public ushort ReadUnsignedShort()
         {
             const int size = sizeof(ushort);
 
-            var r = BinaryPrimitives.ReadUInt16BigEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadUInt16BigEndian(t);
         }
 
         public short ReadSignedShortLittleEndian()
         {
             const int size = sizeof(short);
+
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
             
-            var r = BinaryPrimitives.ReadInt16LittleEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            return BinaryPrimitives.ReadInt16LittleEndian(t);
         }
 
         public ushort ReadUnsignedShortLittleEndian()
         {
             const int size = sizeof(ushort);
 
-            var r = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadUInt16LittleEndian(t);
         }
 
         public int ReadSignedInt()
         {
             const int size = sizeof(int);
 
-            var r = BinaryPrimitives.ReadInt32BigEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadInt32BigEndian(t);
         }
 
         public uint ReadUnsignedInt()
         {
             const int size = sizeof(uint);
+            
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
 
-            var r = BinaryPrimitives.ReadUInt32BigEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            return BinaryPrimitives.ReadUInt32BigEndian(t);
         }
 
         public int ReadSignedIntLittleEndian()
         {
             const int size = sizeof(int);
 
-            var r = BinaryPrimitives.ReadInt32LittleEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadInt32LittleEndian(t);
         }
 
         public uint ReadUnsignedIntLittleEndian()
         {
             const int size = sizeof(uint);
 
-            var r = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadUInt32LittleEndian(t);
         }
 
         public long ReadSignedLong()
         {
             const int size = sizeof(long);
-
-            var r = BinaryPrimitives.ReadInt64BigEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadInt64BigEndian(t);
         }
 
         public ulong ReadUSignedLong()
         {
             const int size = sizeof(ulong);
-
-            var r = BinaryPrimitives.ReadUInt64BigEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadUInt64BigEndian(t);
         }
 
         public long ReadSignedLongLittleEndian()
         {
             const int size = sizeof(long);
 
-            var r = BinaryPrimitives.ReadInt64LittleEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return BinaryPrimitives.ReadInt64LittleEndian(t);
         }
 
         public ulong ReadUSignedLongLittleEndian()
         {
             const int size = sizeof(ulong);
+            
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
 
-            var r = BinaryPrimitives.ReadUInt64LittleEndian(_buffer.Span.Slice(_offset, size));
-            _offset += size;
-            return r;
+            return BinaryPrimitives.ReadUInt64LittleEndian(t);
         }
 
         public int ReadTriad()
@@ -213,15 +253,15 @@ namespace InStory.binary.stream
 
         public ReadOnlyMemory<byte> Read(int size)
         {
-            var r = _buffer.Slice(_offset, size);
-            _offset += size;
-            return r;
+            var memory = new Memory<byte>();
+            ReadExact(memory.Span);
+            
+            return memory;
         }
 
-        public void Load(ReadOnlyMemory<byte> buffer)
+        public void Load()
         {
-            _buffer = buffer;
-            _offset = 0;
+            Buffer = Manager.GetStream();
         }
         
         // Про Zigzag encoding: https://en.wikipedia.org/wiki/Variable-length_quantity
@@ -235,6 +275,12 @@ namespace InStory.binary.stream
         private static long DecodeZigzag64(ulong n)
         {
             return (long) (n >> 1) ^ - (long) (n & 1);
+        }
+
+        public void Dispose()
+        {
+            Buffer?.Dispose();
+            Buffer = null;
         }
     }
 }
