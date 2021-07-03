@@ -2,18 +2,16 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Text;
+using InStory.binary.pool;
 using Microsoft.IO;
 
 namespace InStory.binary.stream
 {
-    public class WStream : IDisposable
+    public class WStream : PooledObject<RStream>, ILoadOnGet
     {
 
         private static readonly RecyclableMemoryStreamManager Manager = new();
         private MemoryStream _buffer;
-        
-        // Чтобы можно было получить только из пула
-        internal WStream(){}
 
         public void Load()
         {
@@ -250,8 +248,9 @@ namespace InStory.binary.stream
             return (ulong) ((n << 1) ^ (n >> 63));
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             _buffer?.Dispose();
             _buffer = null;
         }

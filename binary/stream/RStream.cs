@@ -1,11 +1,12 @@
 using System;
 using System.Buffers.Binary;
 using System.IO;
+using InStory.binary.pool;
 using Microsoft.IO;
 
 namespace InStory.binary.stream
 {
-    public class RStream : IDisposable
+    public class RStream : PooledObject<RStream>, ILoadOnGet
     {
         private static readonly RecyclableMemoryStreamManager Manager = new();
 
@@ -14,9 +15,6 @@ namespace InStory.binary.stream
             get;
             private set;
         }
-        
-        // Чтобы можно было получить только из пула
-        internal RStream(){}
 
         public void Load()
         {
@@ -281,8 +279,9 @@ namespace InStory.binary.stream
             return (long) (n >> 1) ^ - (long) (n & 1);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             Buffer?.Dispose();
             Buffer = null;
         }
