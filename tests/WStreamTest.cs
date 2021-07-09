@@ -223,41 +223,5 @@ namespace tests
 
             t.Dispose();
         }
-
-        [Test]
-        public void NoAllocOnRead()
-        {
-            var manager = new RecyclableMemoryStreamManager();
-
-            using var stream = manager.GetStream();
-
-            var ar = new byte[100];
-            for (byte i = 0; i < 100; ++i)
-            {
-                ar[i] = i;
-            }
-            
-            using var s = WStream.Get("Write NoAllocOnRead");
-            s.WriteByteArray(ar);
-
-            using var r = s.ToRStream("Read after Write NoAllocOnRead");
-            
-            stream.SetLength(ar.Length);
-            r.ReadByteArrayInto(stream);
-
-            stream.Seek(0, SeekOrigin.Begin);
-
-            for (byte i = 0; i < 100; ++i)
-            {
-                var b = stream.ReadByte();
-                if (b != i)
-                {
-                    Assert.Fail("Wrong byte. Need " + i + ", got " + b);
-                }
-            }
-
-            Assert.Pass();
-
-        }
     }
 }

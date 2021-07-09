@@ -204,7 +204,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return t[0] | t[1] << 8 | t[2] << 16; // todo Можно потом напрямую в структуру читать, но тогда надо будет функцию объявить unsafe 
+            return t[0] | t[1] << 8 | t[2] << 16; // todo Можно потом напрямую в структуру читать через Marshal
         }
 
         public int ReadTriadLittleEndian()
@@ -295,6 +295,17 @@ namespace InStory.binary.stream
 
             return Read(count);
         }
+        
+        public void ReadByteSizedByteArrayInto(MemoryStream stream)
+        {
+            var count = ReadUnsignedByte();
+
+            if (stream.Capacity < stream.Position + count)
+            {
+                stream.Capacity = (int)(stream.Position + count); 
+            }
+            Buffer.Read(stream.GetBuffer(), (int)stream.Position, (int)count);
+        }
 
         public ReadOnlyMemory<byte> Read(int size)
         {
@@ -304,12 +315,12 @@ namespace InStory.binary.stream
             return memory;
         }
         
-        // Про Zigzag encoding: https://en.wikipedia.org/wiki/Variable-length_quantity
+        // About Zigzag encoding: https://en.wikipedia.org/wiki/Variable-length_quantity
         // https://gist.github.com/mfuerstenau/ba870a29e16536fdbaba
         
         private static int DecodeZigzag32(uint n)
         {
-            return (int) (n >> 1) ^ -(int) (n & 1);
+            return (int) (n >> 1) ^ - (int) (n & 1);
         }
         
         private static long DecodeZigzag64(ulong n)

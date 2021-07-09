@@ -342,7 +342,7 @@ namespace InStory.binary.stream
             Buffer.Write(value);
         }
 
-        // Про Zigzag encoding: https://en.wikipedia.org/wiki/Variable-length_quantity
+        // About Zigzag encoding: https://en.wikipedia.org/wiki/Variable-length_quantity
         // https://gist.github.com/mfuerstenau/ba870a29e16536fdbaba
         
         private static uint EncodeZigzag32(int n)

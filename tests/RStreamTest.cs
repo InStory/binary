@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using InStory.binary.stream;
+using Microsoft.IO;
 using NUnit.Framework;
 
 namespace tests
@@ -145,6 +147,74 @@ namespace tests
 
             s.SetBuffer(new byte[]{ 0xEE, 0x1C, 0xD3, 0x4B, 0xCD, 0x56, 0xBC, 0xD7, 0x8B, 0xCD });
             Assert.AreEqual(1847, s.ReadSignedVarLong());
+        }
+        
+        
+
+        [Test]
+        public void NoAllocOnRead()
+        {
+            var manager = new RecyclableMemoryStreamManager();
+
+            using (var stream = manager.GetStream())
+            {
+                var ar = new byte[100];
+                for (byte i = 0; i < 100; ++i)
+                {
+                    ar[i] = i;
+                }
+
+                using var s = WStream.Get("Write NoAllocOnRead");
+                s.WriteByteArray(ar);
+
+                using var r = s.ToRStream("Read after Write NoAllocOnRead");
+
+                stream.SetLength(ar.Length);
+                r.ReadByteArrayInto(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                for (byte i = 0; i < 100; ++i)
+                {
+                    var b = stream.ReadByte();
+                    if (b != i)
+                    {
+                        Assert.Fail("Wrong byte. Need " + i + ", got " + b);
+                    }
+                }
+
+                Assert.Pass();
+            }
+            
+            using (var stream = manager.GetStream())
+            {
+                var ar = new byte[100];
+                for (byte i = 0; i < 100; ++i)
+                {
+                    ar[i] = i;
+                }
+
+                using var s = WStream.Get("Write NoAllocOnRead");
+                s.WriteByteArray(ar);
+
+                using var r = s.ToRStream("Read after Write NoAllocOnRead");
+
+                stream.SetLength(ar.Length);
+                r.ReadByteSizedByteArrayInto(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                for (byte i = 0; i < 100; ++i)
+                {
+                    var b = stream.ReadByte();
+                    if (b != i)
+                    {
+                        Assert.Fail("Wrong byte. Need " + i + ", got " + b);
+                    }
+                }
+
+                Assert.Pass();
+            }
         }
     }
 }
