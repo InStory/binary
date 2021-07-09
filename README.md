@@ -80,11 +80,11 @@ var buffer = w.Buffer;
 
 ```c#
 // BIG endian by default
-r.WriteSignedIntLittleEndian(-6) // Read signed int32 LITTLE endian
-r.WriteUnsignedLongLittleEndian(0xAABBCCDDEE) // Read unsigned long LITTLE endian 
-r.WriteSignedShort(-0x7FAA) // Read signed short BIG endian
-r.WriteTriad(0x7FBBCC) // Read triad (3 bytes) BIG endian
-r.WriteUnsignedByte(0xFF) // Read unsigned byte
+r.WriteSignedIntLittleEndian(-6) // Write signed int32 LITTLE endian
+r.WriteUnsignedLongLittleEndian(0xAABBCCDDEE) // Write unsigned long LITTLE endian 
+r.WriteSignedShort(-0x7FAA) // Write signed short BIG endian
+r.WriteTriad(0x7FBBCC) // Write triad (3 bytes) BIG endian
+r.WriteUnsignedByte(0xFF) // Write unsigned byte
 
 r.WriteByteSizedString("aquaminer") // 1 byte used for length (string can contain max 255 bytes)
 r.WriteString("NolikTop") // VarInt used for length (string can contain more than 255 bytes)
