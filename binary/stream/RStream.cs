@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.IO;
+using System.Text;
 using InStory.binary.pool;
 using Microsoft.IO;
 
@@ -23,6 +24,23 @@ namespace InStory.binary.stream
                 throw new ReUseStreamException(); 
             }
             Buffer = Manager.GetStream();
+        }
+
+        public void CleanBuffer()
+        {
+            Buffer?.Dispose();
+            Buffer = Manager.GetStream();
+        }
+
+        /// <summary>
+        /// FOR TESTING PURPOSES ONLY!!!
+        /// </summary>
+        /// <param name="buf"></param>
+        public void WriteBuffer(byte[] buf)
+        {
+            Buffer.Seek(0, SeekOrigin.Begin);
+            Buffer.Write(buf);
+            Buffer.Seek(0, SeekOrigin.Begin);
         }
 
         private void ReadExact(Span<byte> buf)
@@ -56,6 +74,8 @@ namespace InStory.binary.stream
             return (byte)value;
         }
 
+        public byte ReadByte() => ReadUnsignedByte();
+
         public short ReadSignedShort()
         {
             const int size = sizeof(short);
@@ -63,7 +83,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return BinaryPrimitives.ReadInt16BigEndian(t);
+            return (short)(t[0] | (t[1] << 8));
         }
 
         public ushort ReadUnsignedShort()
@@ -73,7 +93,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return BinaryPrimitives.ReadUInt16BigEndian(t);
+            return (ushort)(t[0] | t[1] << 8);
         }
 
         public short ReadSignedShortLittleEndian()
@@ -83,7 +103,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return BinaryPrimitives.ReadInt16LittleEndian(t);
+            return (short)(t[0] << 8 | t[1]);
         }
 
         public ushort ReadUnsignedShortLittleEndian()
@@ -92,8 +112,8 @@ namespace InStory.binary.stream
 
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
-            
-            return BinaryPrimitives.ReadUInt16LittleEndian(t);
+
+            return (ushort)(t[0] << 8 | t[1]);
         }
 
         public int ReadSignedInt()
@@ -103,7 +123,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return BinaryPrimitives.ReadInt32BigEndian(t);
+            return t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24;
         }
 
         public uint ReadUnsignedInt()
@@ -113,7 +133,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return BinaryPrimitives.ReadUInt32BigEndian(t);
+            return (uint)(t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24);
         }
 
         public int ReadSignedIntLittleEndian()
@@ -123,7 +143,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return BinaryPrimitives.ReadInt32LittleEndian(t);
+            return t[0] << 24 | t[1] << 16 | t[2] << 8 | t[3];
         }
 
         public uint ReadUnsignedIntLittleEndian()
@@ -133,7 +153,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return BinaryPrimitives.ReadUInt32LittleEndian(t);
+            return (uint)(t[0] << 24 | t[1] << 16 | t[2] << 8 | t[3]);
         }
 
         public long ReadSignedLong()
@@ -142,18 +162,18 @@ namespace InStory.binary.stream
             
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
-            
-            return BinaryPrimitives.ReadInt64BigEndian(t);
+
+            return (uint)(t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24) | (long)t[4] << 32 | (long)t[5] << 40 | (long)t[6] << 48 | (long)t[7] << 56;
         }
 
-        public ulong ReadUSignedLong()
+        public ulong ReadUnsignedLong()
         {
             const int size = sizeof(ulong);
             
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return BinaryPrimitives.ReadUInt64BigEndian(t);
+            return (uint)(t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24) | (ulong)t[4] << 32 | (ulong)t[5] << 40 | (ulong)t[6] << 48 | (ulong)t[7] << 56;
         }
 
         public long ReadSignedLongLittleEndian()
@@ -162,34 +182,38 @@ namespace InStory.binary.stream
 
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
-            
-            return BinaryPrimitives.ReadInt64LittleEndian(t);
+
+            return (long)t[0] << 56 | (long)t[1] << 48 | (long)t[2] << 40 | (long)t[3] << 32 | ((uint)(t[4] << 24) | (uint)(t[5] << 16) | (uint)(t[6] << 8) | t[7]);
         }
 
-        public ulong ReadUSignedLongLittleEndian()
+        public ulong ReadUnsignedLongLittleEndian()
         {
             const int size = sizeof(ulong);
             
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return BinaryPrimitives.ReadUInt64LittleEndian(t);
+            return (ulong)t[0] << 56 | (ulong)t[1] << 48 | (ulong)t[2] << 40 | (ulong)t[3] << 32 | ((uint)(t[4] << 24) | (uint)(t[5] << 16) | (uint)(t[6] << 8) | t[7]);
         }
 
         public int ReadTriad()
         {
             const int size = 3;
+
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
             
-            var data = Read(size).Span;
-            return data[0] | data[1] << 8 | data[2] << 16;
+            return t[0] | t[1] << 8 | t[2] << 16; // todo Можно потом напрямую в структуру читать, но тогда надо будет функцию объявить unsafe 
         }
 
         public int ReadTriadLittleEndian()
         {
             const int size = 3;
             
-            var data = Read(size).Span;
-            return data[0] << 16 | data[1] << 8 | data[2];
+            Span<byte> t = stackalloc byte[size];
+            ReadExact(t);
+            
+            return t[0] << 16 | t[1] << 8 | t[2];
         }
 
         public uint ReadUnsignedVarInt()
@@ -197,7 +221,7 @@ namespace InStory.binary.stream
             uint val = 0;
             for (var i = 0; i <= 28; i += 7)
             {
-                var b = ReadUnsignedByte();
+                var b = ReadByte();
                 val |= ((uint)b & 0x7F) << i;
                 if ((b & 0x80) == 0)
                 {
@@ -234,9 +258,10 @@ namespace InStory.binary.stream
             return DecodeZigzag64(ReadUnsignedVarLong());
         }
 
-        public string ReadString()
+        public string ReadString(Encoding encoding = null)
         {
-            return ReadByteArray().ToString();
+            encoding ??= Encoding.UTF8;
+            return encoding.GetString(ReadByteArray().Span);
         }
 
         public ReadOnlyMemory<byte> ReadByteArray()
@@ -245,10 +270,22 @@ namespace InStory.binary.stream
 
             return Read((int)count);
         }
-        
-        public string ReadByteSizedString()
+
+        public void ReadByteArrayInto(MemoryStream stream)
         {
-            return ReadByteSizedByteArray().ToString();
+            var count = ReadUnsignedVarInt();
+
+            if (stream.Capacity < stream.Position + count)
+            {
+                stream.Capacity = (int)(stream.Position + count); //todo Переделать, пока не знаю как это адекватно реализовать
+            }
+            Buffer.Read(stream.GetBuffer(), (int)stream.Position, (int)count);
+        }
+
+        public string ReadByteSizedString(Encoding encoding = null)
+        {
+            encoding ??= Encoding.UTF8;
+            return encoding.GetString(ReadByteSizedByteArray().Span);
         }
 
         public ReadOnlyMemory<byte> ReadByteSizedByteArray()
@@ -260,7 +297,7 @@ namespace InStory.binary.stream
 
         public ReadOnlyMemory<byte> Read(int size)
         {
-            var memory = new Memory<byte>();
+            var memory = new Memory<byte>(new byte[size]);
             ReadExact(memory.Span);
             
             return memory;
