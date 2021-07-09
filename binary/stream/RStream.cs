@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Text;
+using InStory.binary.other;
 using InStory.binary.pool;
 using Microsoft.IO;
 
@@ -36,7 +37,7 @@ namespace InStory.binary.stream
         /// FOR TESTING PURPOSES ONLY!!!
         /// </summary>
         /// <param name="buf"></param>
-        public void WriteBuffer(byte[] buf)
+        public void SetBuffer(byte[] buf)
         {
             Buffer.Seek(0, SeekOrigin.Begin);
             Buffer.Write(buf);
@@ -83,7 +84,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return (short)(t[0] | (t[1] << 8));
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadInt16BigEndian(t) : BinaryPrimitives.ReadInt16LittleEndian(t);
         }
 
         public ushort ReadUnsignedShort()
@@ -93,7 +94,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return (ushort)(t[0] | t[1] << 8);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadUInt16BigEndian(t) : BinaryPrimitives.ReadUInt16LittleEndian(t);
         }
 
         public short ReadSignedShortLittleEndian()
@@ -103,7 +104,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return (short)(t[0] << 8 | t[1]);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadInt16LittleEndian(t) : BinaryPrimitives.ReadInt16BigEndian(t);
         }
 
         public ushort ReadUnsignedShortLittleEndian()
@@ -113,7 +114,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return (ushort)(t[0] << 8 | t[1]);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadUInt16LittleEndian(t) : BinaryPrimitives.ReadUInt16BigEndian(t);
         }
 
         public int ReadSignedInt()
@@ -123,7 +124,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24;
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadInt32BigEndian(t) : BinaryPrimitives.ReadInt32LittleEndian(t);
         }
 
         public uint ReadUnsignedInt()
@@ -133,7 +134,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return (uint)(t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadUInt32BigEndian(t) : BinaryPrimitives.ReadUInt32LittleEndian(t);
         }
 
         public int ReadSignedIntLittleEndian()
@@ -143,7 +144,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return t[0] << 24 | t[1] << 16 | t[2] << 8 | t[3];
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadInt32LittleEndian(t) : BinaryPrimitives.ReadInt32BigEndian(t);
         }
 
         public uint ReadUnsignedIntLittleEndian()
@@ -153,7 +154,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
             
-            return (uint)(t[0] << 24 | t[1] << 16 | t[2] << 8 | t[3]);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadUInt32LittleEndian(t) : BinaryPrimitives.ReadUInt32BigEndian(t);
         }
 
         public long ReadSignedLong()
@@ -163,7 +164,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return (uint)(t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24) | (long)t[4] << 32 | (long)t[5] << 40 | (long)t[6] << 48 | (long)t[7] << 56;
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadInt64BigEndian(t) : BinaryPrimitives.ReadInt64LittleEndian(t);
         }
 
         public ulong ReadUnsignedLong()
@@ -172,8 +173,8 @@ namespace InStory.binary.stream
             
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
-            
-            return (uint)(t[0] | t[1] << 8 | t[2] << 16 | t[3] << 24) | (ulong)t[4] << 32 | (ulong)t[5] << 40 | (ulong)t[6] << 48 | (ulong)t[7] << 56;
+
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadUInt64BigEndian(t) : BinaryPrimitives.ReadUInt64LittleEndian(t);
         }
 
         public long ReadSignedLongLittleEndian()
@@ -183,7 +184,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return (long)t[0] << 56 | (long)t[1] << 48 | (long)t[2] << 40 | (long)t[3] << 32 | ((uint)(t[4] << 24) | (uint)(t[5] << 16) | (uint)(t[6] << 8) | t[7]);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadInt64LittleEndian(t) : BinaryPrimitives.ReadInt64BigEndian(t);
         }
 
         public ulong ReadUnsignedLongLittleEndian()
@@ -193,7 +194,7 @@ namespace InStory.binary.stream
             Span<byte> t = stackalloc byte[size];
             ReadExact(t);
 
-            return (ulong)t[0] << 56 | (ulong)t[1] << 48 | (ulong)t[2] << 40 | (ulong)t[3] << 32 | ((uint)(t[4] << 24) | (uint)(t[5] << 16) | (uint)(t[6] << 8) | t[7]);
+            return Endianness.DontFlipEndianness ? BinaryPrimitives.ReadUInt64LittleEndian(t) : BinaryPrimitives.ReadUInt64BigEndian(t);
         }
 
         public int ReadTriad()

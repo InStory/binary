@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Text;
+using InStory.binary.other;
 using InStory.binary.pool;
 using Microsoft.IO;
 
@@ -58,8 +59,14 @@ namespace InStory.binary.stream
             const int size = sizeof(short);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)value;
-            t[1] = (byte)(value >> 8);
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteInt16BigEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt16LittleEndian(t, value);
+            }
 
             Buffer.Write(t);
         }
@@ -69,8 +76,14 @@ namespace InStory.binary.stream
             const int size = sizeof(ushort);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)value;
-            t[1] = (byte)(value >> 8);
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteUInt16BigEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt16LittleEndian(t, value);
+            }
             
             Buffer.Write(t);
         }
@@ -79,9 +92,15 @@ namespace InStory.binary.stream
         {
             const int size = sizeof(short);
             Span<byte> t = stackalloc byte[size];
-            
-            t[0] = (byte)(value >> 8);
-            t[1] = (byte)value;
+
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteInt16LittleEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt16BigEndian(t, value);
+            }
 
             Buffer.Write(t);
         }
@@ -91,8 +110,14 @@ namespace InStory.binary.stream
             const int size = sizeof(ushort);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)(value >> 8);
-            t[1] = (byte)value;
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteUInt16LittleEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt16BigEndian(t, value);
+            }
             
             Buffer.Write(t);
         }
@@ -102,10 +127,14 @@ namespace InStory.binary.stream
             const int size = sizeof(int);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)value;
-            t[1] = (byte)(value >> 8);
-            t[2] = (byte)(value >> 16);
-            t[3] = (byte)(value >> 24);
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteInt32BigEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt32LittleEndian(t, value);
+            }
             
             Buffer.Write(t);
         }
@@ -115,11 +144,15 @@ namespace InStory.binary.stream
             const int size = sizeof(uint);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)value;
-            t[1] = (byte)(value >> 8);
-            t[2] = (byte)(value >> 16);
-            t[3] = (byte)(value >> 24);
-
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteUInt32BigEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt32LittleEndian(t, value);
+            }
+            
             Buffer.Write(t);
         }
 
@@ -128,10 +161,14 @@ namespace InStory.binary.stream
             const int size = sizeof(int);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)(value >> 24);
-            t[1] = (byte)(value >> 16);
-            t[2] = (byte)(value >> 8);
-            t[3] = (byte)value;
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteInt32LittleEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt32BigEndian(t, value);
+            }
 
             Buffer.Write(t);
         }
@@ -141,10 +178,14 @@ namespace InStory.binary.stream
             const int size = sizeof(uint);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)(value >> 24);
-            t[1] = (byte)(value >> 16);
-            t[2] = (byte)(value >> 8);
-            t[3] = (byte)value;
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteUInt32LittleEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt32BigEndian(t, value);
+            }
 
             Buffer.Write(t);
         }
@@ -154,14 +195,14 @@ namespace InStory.binary.stream
             const int size = sizeof(long);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)value;
-            t[1] = (byte)(value >> 8);
-            t[2] = (byte)(value >> 16);
-            t[3] = (byte)(value >> 24);
-            t[4] = (byte)(value >> 32);
-            t[5] = (byte)(value >> 40);
-            t[6] = (byte)(value >> 48);
-            t[7] = (byte)(value >> 56);
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteInt64BigEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt64LittleEndian(t, value);
+            }
 
             Buffer.Write(t);
         }
@@ -170,15 +211,15 @@ namespace InStory.binary.stream
         {
             const int size = sizeof(ulong);
             Span<byte> t = stackalloc byte[size];
-            
-            t[0] = (byte)value;
-            t[1] = (byte)(value >> 8);
-            t[2] = (byte)(value >> 16);
-            t[3] = (byte)(value >> 24);
-            t[4] = (byte)(value >> 32);
-            t[5] = (byte)(value >> 40);
-            t[6] = (byte)(value >> 48);
-            t[7] = (byte)(value >> 56);
+
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteUInt64BigEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt64LittleEndian(t, value);
+            }
             
             Buffer.Write(t);
         }
@@ -187,14 +228,14 @@ namespace InStory.binary.stream
             const int size = sizeof(long);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)(value >> 56);
-            t[1] = (byte)(value >> 48);
-            t[2] = (byte)(value >> 40);
-            t[3] = (byte)(value >> 32);
-            t[4] = (byte)(value >> 24);
-            t[5] = (byte)(value >> 16);
-            t[6] = (byte)(value >> 8);
-            t[7] = (byte)value;
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteInt64LittleEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt64BigEndian(t, value);
+            }
             
             Buffer.Write(t);
         }
@@ -204,14 +245,14 @@ namespace InStory.binary.stream
             const int size = sizeof(ulong);
             Span<byte> t = stackalloc byte[size];
 
-            t[0] = (byte)(value >> 56);
-            t[1] = (byte)(value >> 48);
-            t[2] = (byte)(value >> 40);
-            t[3] = (byte)(value >> 32);
-            t[4] = (byte)(value >> 24);
-            t[5] = (byte)(value >> 16);
-            t[6] = (byte)(value >> 8);
-            t[7] = (byte)value;
+            if (Endianness.DontFlipEndianness)
+            {
+                BinaryPrimitives.WriteUInt64LittleEndian(t, value);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt64BigEndian(t, value);
+            }
 
             Buffer.Write(t);
         }
