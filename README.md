@@ -1,5 +1,7 @@
 ![Logo](https://sun9-71.userapi.com/impg/3jqpOEALKqlxjKoJxv9As-Ytg--ky79_8BoMxg/h04joph7d0I.jpg?size=800x200&quality=96&sign=1555a32f8decd2d414d508cc37166dd6&type=album)
 
+## Installation
+You can get it on Nuget: https://www.nuget.org/packages/InStory.binary
 
 ## Usage
 
