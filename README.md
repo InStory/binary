@@ -1,4 +1,4 @@
-![Logo](https://sun9-62.userapi.com/impg/piG6ZWxSdwscAIE5RQNxKS3fIbSt_YFkSLMicQ/YAQAyuajLQE.jpg?size=800x200&quality=96&sign=66459bd8e5ff4869778b3a8a09289e53&type=album)
+![Logo](https://sun9-14.userapi.com/impg/dSaWIDHHbQndWkUYYXShw_B4E7dfdNV5-Dp67g/WqCvkMoq5q0.jpg?size=800x200&quality=96&sign=1eac232a01a06a4d5e9b7656b4306dfd&type=album)
 
 
 ## Usage
