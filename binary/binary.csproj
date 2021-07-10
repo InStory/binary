@@ -8,6 +8,8 @@
         <Company>instory</Company>
         <AssemblyName>InStory.binary</AssemblyName>
         <RootNamespace>InStory.binary</RootNamespace>
+        <RepositoryUrl>https://github.com/InStory/binary</RepositoryUrl>
+        <PackageTags>binary serialization</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
