@@ -12,6 +12,7 @@
         <PackageTags>binary serialization</PackageTags>
         <PackageLicenseUrl>https://github.com/InStory/binary/blob/master/LICENSE</PackageLicenseUrl>
         <PackageIconUrl>https://sun1-17.userapi.com/s/v1/ig2/nYZccxKHl_4S4PVpdwC0-xJ7MFZp8fRQ2FtVsZPbGNsvKU3d58ovD9F5vHb8WMtA4bjvgaQ5eC6QT15fgD7iIuT7.jpg?size=50x0&amp;quality=96&amp;crop=0,0,402,402&amp;ava=1</PackageIconUrl>
+        <PackageVersion>1.0.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
